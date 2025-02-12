@@ -1,6 +1,5 @@
 import './style.css'
 import { populateTable } from "./ranking/ranking.js";
-import data from './data/junior.json'
 
 document.querySelector('#app').innerHTML = `
   <div>
@@ -22,5 +21,20 @@ document.querySelector('#app').innerHTML = `
   </div>
 `
 
-// Populate the table on page load
-populateTable(data, "ranking_table");
+const fetchData = async () => {
+    try {
+        const response = await fetch("http://localhost:3000/api/data"); // API URL
+        if (!response.ok) throw new Error("Failed to fetch data");
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        document.getElementById("ranking_table").innerHTML = "<p>Error loading data</p>";
+    }
+}
+
+const data = await fetchData();
+if (data) {
+  populateTable(data, "ranking_table");
+}
+
